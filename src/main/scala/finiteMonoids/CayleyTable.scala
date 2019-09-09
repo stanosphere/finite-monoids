@@ -29,7 +29,7 @@ object CayleyTable {
   // all we're trying to establish is if they have the same structure, not the same contents
   def areIsomorphic[A,B](as: CayleyTable[A],  bs: CayleyTable[B]): Boolean = {
     val List(aNums, bNums) = List(as, bs).map(_.toSortedNumericTable)
-    as.toSortedNumericTable == bs.toSortedNumericTable
+    getAllPermutations(aNums).contains(bNums)
   }
 
   def permuteCayleyTable(numericTable: CayleyTable[Int]): CayleyTable[Int] = {

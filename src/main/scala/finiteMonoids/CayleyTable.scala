@@ -12,27 +12,28 @@ case class CayleyTable[A](table: List[List[A]]) {
     })
   }
 
-  def toSortedNumericTable: CayleyTable[Int] = {
+  private def toNumericTable: CayleyTable[Int] = CayleyTable {
     val rep = table.flatten.distinct.zipWithIndex.toMap[A, Int]
-    CayleyTable {
-      val intTable = deepMap(rep)(table)
-      intTable.sortBy(_.head)
-    }
+    deepMap(rep)(table)
   }
 }
 
 object CayleyTable {
-  def deepMap[A,B](f: A => B)(xss: List[List[A]]): List[List[B]] =
+  private def deepMap[A,B](f: A => B)(xss: List[List[A]]): List[List[B]] =
     xss.map(_.map(f))
+
+  private def sortForComparison(c: CayleyTable[Int]): CayleyTable[Int] =
+    CayleyTable { c.table.sortBy(_.head) }
 
   // need to compare one Cayley table with all permutations of the other
   // all we're trying to establish is if they have the same structure, not the same contents
   def areIsomorphic[A,B](as: CayleyTable[A],  bs: CayleyTable[B]): Boolean = {
-    val List(aNums, bNums) = List(as, bs).map(_.toSortedNumericTable)
-    getAllPermutations(aNums).contains(bNums)
+    val List(aNums, bNums) = List(as, bs).map(_.toNumericTable)
+    val sortedB = sortForComparison(bNums)
+    getAllPermutations(aNums).map(sortForComparison).contains(sortedB)
   }
 
-  def permuteCayleyTable(numericTable: CayleyTable[Int]): CayleyTable[Int] = {
+  private def permuteCayleyTable(numericTable: CayleyTable[Int]): CayleyTable[Int] = {
     val table = numericTable.table
     val mod = table.length
 
@@ -43,7 +44,7 @@ object CayleyTable {
 
   // this is obscenely dangerous because if you call it with something that never returns to its initial state you die
   @annotation.tailrec
-  def obtainCycle[A](init: A, f: A => A, res: List[A]): List[A] = res match {
+  private def obtainCycle[A](init: A, f: A => A, res: List[A]): List[A] = res match {
     case Nil => obtainCycle(init, f, List(init))
     case h :: Nil => obtainCycle(init, f, f(h) :: (h :: Nil))
     case h :: _ => {
@@ -52,6 +53,6 @@ object CayleyTable {
     }
   }
 
-  def getAllPermutations(numericTable: CayleyTable[Int]): List[CayleyTable[Int]] =
+  private def getAllPermutations(numericTable: CayleyTable[Int]): List[CayleyTable[Int]] =
     obtainCycle(numericTable, permuteCayleyTable, Nil)
 }

@@ -1,6 +1,7 @@
 package finiteMonoids
 
 import org.scalatest._
+import FiniteMonoid.areIsomorphic
 import finiteMonoids.instances.OrderTwo.{
   groupMonoid,
   nonGroupMonoid,
@@ -17,10 +18,10 @@ class InitialTests extends FlatSpec {
     println(booleanOr.computeCayleyTable.showPermutations)
     println(booleanAnd.computeCayleyTable.showPermutations)
 
-    assert(FiniteMonoid.areIsomorphic(booleanOr, booleanAnd))
+    assert(areIsomorphic(booleanOr, booleanAnd) === true)
   }
 
-  it should "throw NoSuchElementException if an empty stack is popped" in {
-    assert(1 === 1)
+  "the group and non group monoids" should "be isomorphic" in {
+    assert(areIsomorphic(nonGroupMonoid, groupMonoid) === false)
   }
 }

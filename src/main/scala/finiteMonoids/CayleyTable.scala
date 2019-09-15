@@ -20,10 +20,6 @@ case class CayleyTable[A](table: List[List[A]]) {
     getAllPermutations(numericTable)
       .map(sortForComparison)
       .foreach(_.show)
-
-    getAllPermutations(numericTable)
-      .foreach(_.show)
-    println("------------ Shown permutations ------------")
   }
 
   private def toNumericTable: CayleyTable[Int] = CayleyTable {
@@ -33,9 +29,10 @@ case class CayleyTable[A](table: List[List[A]]) {
 }
 
 object CayleyTable {
-
-  def comparator(xs: List[Int], ys: List[Int]): Boolean = {
-    zipWith(xs,ys)((_,_)).foldLeft(false)((acc, x) => acc || x._2 > x._1)
+  private def comparator(xs: List[Int], ys: List[Int]): Boolean = {
+    zipWith(xs,ys)((_,_)).foldLeft(false)(
+      (bool, x) => bool || { val (l,r) = x; l < r }
+    )
   }
 
   private def sortColumns(c: CayleyTable[Int]): CayleyTable[Int] =

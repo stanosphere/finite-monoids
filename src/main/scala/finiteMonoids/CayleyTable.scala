@@ -1,5 +1,7 @@
 package finiteMonoids
 
+import helpers.ListHelpers.{deepMap,zipWith}
+
 // this is a simple way of representing the structure of a finite monoid
 // https://en.wikipedia.org/wiki/Cayley_table
 case class CayleyTable[A](table: List[List[A]]) {
@@ -12,6 +14,18 @@ case class CayleyTable[A](table: List[List[A]]) {
     })
   }
 
+  def showPermutations: Unit = {
+    println("Permutations:")
+    val numericTable = CayleyTable(table).toNumericTable
+    getAllPermutations(numericTable)
+      .map(sortForComparison)
+      .foreach(_.show)
+
+    getAllPermutations(numericTable)
+      .foreach(_.show)
+    println("------------ Shown permutations ------------")
+  }
+
   private def toNumericTable: CayleyTable[Int] = CayleyTable {
     val rep = table.flatten.distinct.zipWithIndex.toMap[A, Int]
     deepMap(rep)(table)
@@ -19,11 +33,19 @@ case class CayleyTable[A](table: List[List[A]]) {
 }
 
 object CayleyTable {
-  private def deepMap[A,B](f: A => B)(xss: List[List[A]]): List[List[B]] =
-    xss.map(_.map(f))
+
+  def comparator(xs: List[Int], ys: List[Int]): Boolean = {
+    zipWith(xs,ys)((_,_)).foldLeft(false)((acc, x) => acc || x._2 > x._1)
+  }
+
+  private def sortColumns(c: CayleyTable[Int]): CayleyTable[Int] =
+    CayleyTable { c.table.transpose.sortWith(comparator).transpose }
+
+  private def sortRows(c: CayleyTable[Int]): CayleyTable[Int] =
+    CayleyTable { c.table.sortWith(comparator) }
 
   private def sortForComparison(c: CayleyTable[Int]): CayleyTable[Int] =
-    CayleyTable { c.table.sortBy(_.head) }
+    (sortRows _ andThen sortColumns)(c)
 
   // need to compare one Cayley table with all permutations of the other
   // all we're trying to establish is if they have the same structure, not the same contents

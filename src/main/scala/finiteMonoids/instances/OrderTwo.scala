@@ -1,10 +1,11 @@
 package finiteMonoids.instances
 
+import datastructures.Complex
 import finiteMonoids.FiniteMonoid
 
-trait Pair
-case class E() extends Pair
-case class A() extends Pair
+sealed trait Pair
+sealed case class E() extends Pair
+sealed case class A() extends Pair
 
 object OrderTwo {
   // this monoid is also a representation of the finite simple group of order 2
@@ -38,5 +39,11 @@ object OrderTwo {
     def op(x: Boolean, y: Boolean): Boolean = x && y
     def zero: Boolean = true
     def elements: List[Boolean] = List(true, false)
+  }
+
+  val complex: FiniteMonoid[Complex] = new FiniteMonoid[Complex] {
+    def elements: List[Complex] = List(Complex(1,0), Complex(-1, 0))
+    def op(x: Complex, y: Complex): Complex = x * y
+    def zero: Complex = Complex(1,0)
   }
 }

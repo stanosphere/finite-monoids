@@ -18,14 +18,3 @@ object FiniteMonoid {
   def areIsomorphic[A,B](x: FiniteMonoid[A], y: FiniteMonoid[B]): Boolean =
     CayleyTable.areIsomorphic(x.computeCayleyTable, y.computeCayleyTable)
 }
-
-object CheckIsomorphisms extends App {
-  import finiteMonoids.instances.OrderTwo._
-  val nonGroupCayley = nonGroupMonoid.computeCayleyTable.toSortedNumericTable
-  val nonGroupCayley1 = nonGroupMonoid.computeCayleyTable.toSortedNumericTable
-
-//  val booleanCayley = Stanoid(Monoid.booleanOr, List(true, false)).computeCayleyTable.toSortedNumericTable
-//  val booleanCayley1 = Stanoid(Monoid.booleanOr, List(false, true)).computeCayleyTable.toSortedNumericTable
-
-  CayleyTable.getAllPermutations(nonGroupCayley).foreach(_.show)
-}

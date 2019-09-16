@@ -7,14 +7,14 @@ import helpers.ListHelpers.{deepMap,zipWith}
 case class CayleyTable[A](table: List[List[A]]) {
   import CayleyTable._
 
-  def show: Unit = {
+  def show(): Unit = {
     println("Cayley Table:")
     table.foreach(row => {
       println(row.map(_.toString).reduce((x,y) => s"${x}, ${y}"))
     })
   }
 
-  def showPermutations: Unit = {
+  def showPermutations(): Unit = {
     println("Permutations:")
     val numericTable = CayleyTable(table).toNumericTable
     getAllPermutations(numericTable)

@@ -15,13 +15,10 @@ import finiteMonoids.instances.OrderTwo.{
 class InitialTests extends FlatSpec {
 
   "The boolean monoids" should "be isomorphic" in {
-    println(booleanOr.computeCayleyTable.showPermutations)
-    println(booleanAnd.computeCayleyTable.showPermutations)
-
     assert(areIsomorphic(booleanOr, booleanAnd) === true)
   }
 
-  "the group and non group monoids" should "be isomorphic" in {
+  "the group and non group monoids" should "not be isomorphic" in {
     assert(areIsomorphic(nonGroupMonoid, groupMonoid) === false)
   }
 }

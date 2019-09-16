@@ -22,7 +22,7 @@ case class CayleyTable[A](table: List[List[A]]) {
       .foreach(_.show)
   }
 
-  private def toNumericTable: CayleyTable[Int] = CayleyTable {
+  def toNumericTable: CayleyTable[Int] = CayleyTable {
     val rep = table.flatten.distinct.zipWithIndex.toMap[A, Int]
     deepMap(rep)(table)
   }

@@ -7,7 +7,8 @@ import finiteMonoids.instances.OrderTwo.{
   nonGroupMonoid,
   booleanAnd,
   booleanOr,
-  complex
+  complex,
+  idempotentMatrices
 }
 
 // I'm not entirely sure how I would like to structure this yet
@@ -20,5 +21,9 @@ class InitialTests extends FlatSpec {
 
   "the group and non group monoids" should "not be isomorphic" in {
     assert(areIsomorphic(nonGroupMonoid, groupMonoid) === false)
+  }
+
+  "the idempotent matrices monoid and the non group monoid" should "be isomorphic" in {
+    assert(areIsomorphic(nonGroupMonoid, idempotentMatrices) === true)
   }
 }

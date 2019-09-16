@@ -1,6 +1,6 @@
 package finiteMonoids.instances
 
-import datastructures.Complex
+import datastructures.{Complex, Matrix}
 import finiteMonoids.FiniteMonoid
 
 sealed trait Pair
@@ -45,5 +45,14 @@ object OrderTwo {
     def elements: List[Complex] = List(Complex(1,0), Complex(-1, 0))
     def op(x: Complex, y: Complex): Complex = x * y
     def zero: Complex = Complex(1,0)
+  }
+
+  val idempotentMatrices: FiniteMonoid[Matrix[Int]] = new FiniteMonoid[Matrix[Int]] {
+    override def elements: List[Matrix[Int]] = {
+      val idempotentMatrix = Matrix(List(3, -6), List(1, -2)) // A * A == A
+      List(Matrix.identityInt(2), idempotentMatrix)
+    }
+    override def op(a1: Matrix[Int], a2: Matrix[Int]): Matrix[Int] = a1 * a2
+    override def zero: Matrix[Int] = Matrix.identityInt(2)
   }
 }

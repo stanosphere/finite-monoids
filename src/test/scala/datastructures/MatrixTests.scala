@@ -38,9 +38,6 @@ class MatrixTests extends FlatSpec {
       List(Complex(1, -5),  Complex(6, -2))
     )
 
-    println(m1 * m2)
-    println(m2 * m1)
-
     assert(m1 * m2 === Matrix(
         List(Complex(6.0,-4.0), Complex(-1.0,11.0)),
         List(Complex(16.0,-2.0), Complex(7.0,-9.0))

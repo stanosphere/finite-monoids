@@ -9,7 +9,7 @@ sealed case class Q1() extends Quad
 sealed case class Q2() extends Quad
 sealed case class Q3() extends Quad
 
-object OrderFour extends App {
+object OrderFour {
   val cyclicGroup: FiniteMonoid[Quad] = new FiniteMonoid[Quad] {
     // yes I've written out all 16 cases, yes it was dumb
     def op(x: Quad, y: Quad): Quad = (x,y) match {

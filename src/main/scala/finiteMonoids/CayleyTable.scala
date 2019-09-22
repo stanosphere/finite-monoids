@@ -1,6 +1,7 @@
 package finiteMonoids
 
-import helpers.ListHelpers.{deepMap,zipWith}
+import helpers.ListHelpers.{deepMap, zipWith, obtainCycle}
+import datastructures.Matrix
 
 // this is a simple way of representing the structure of a finite monoid
 // https://en.wikipedia.org/wiki/Cayley_table
@@ -61,17 +62,19 @@ object CayleyTable {
     CayleyTable { deepMap(nextInt)(table) }
   }
 
-  // this is obscenely dangerous because if you call it with something that never returns to its initial state you die
-  @annotation.tailrec
-  private def obtainCycle[A](init: A, f: A => A, res: List[A]): List[A] = res match {
-    case Nil => obtainCycle(init, f, List(init))
-    case h :: Nil => obtainCycle(init, f, f(h) :: (h :: Nil))
-    case h :: _ => {
-      val next = f(h)
-      if (next == init) res else obtainCycle(init, f, next :: res)
-    }
-  }
-
   private def getAllPermutations(numericTable: CayleyTable[Int]): List[CayleyTable[Int]] =
     obtainCycle(numericTable, permuteCayleyTable, Nil)
+
+  def toFiniteMonoid(numericTable: CayleyTable[Int]): FiniteMonoid[Int] = {
+    val elems = numericTable.table.head
+    // just need to look up entry in cayley table
+    // for convenience I think I'll just turn it into a matrix
+    val matrix = Matrix(numericTable.table)
+
+    new FiniteMonoid[Int] {
+      def elements: List[Int] = elems
+      def op(x: Int, y: Int): Int = matrix.getElem(x, y)
+      def zero: Int = 0
+    }
+  }
 }

@@ -35,6 +35,14 @@ case class Matrix[A: Mult](elems: List[List[A]]) {
   def getColumn(j: Int): List[A] = elems.map(_(j))
   def getElem(i: Int, j: Int): A = getRow(i)(j)
 
+  def getAllRows: List[List[A]] = {
+    for { i <- 0 until size._1 } yield getRow(i)
+  }.toList
+
+  def getAllColumns: List[List[A]] = {
+    for { j <- 0 until size._2 } yield getColumn(j)
+  }.toList
+
   def update(i: Int, j: Int)(x: A): Matrix[A] = Matrix {
     val newRow = getRow(i).updated(j, x)
     elems.updated(i,newRow)

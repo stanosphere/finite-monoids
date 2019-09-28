@@ -1,5 +1,7 @@
 package finiteMonoids
 
+import scala.math.Ordering.Implicits._
+
 import helpers.ListHelpers.{deepMap, zipWith, obtainCycle, combinations}
 import datastructures.Matrix
 
@@ -19,7 +21,7 @@ case class CayleyTable[A](table: List[List[A]]) {
     println("Permutations:")
     val numericTable = CayleyTable(table).toNumericTable
     getAllPermutations(numericTable)
-      .map(sortForComparison)
+      .map(sortTable)
       .foreach(_.show)
   }
 
@@ -30,27 +32,21 @@ case class CayleyTable[A](table: List[List[A]]) {
 }
 
 object CayleyTable {
-  private def comparator(xs: List[Int], ys: List[Int]): Boolean = {
-    zipWith(xs,ys)((_,_)).foldLeft(false)(
-      (bool, x) => bool || { val (l,r) = x; l < r }
-    )
-  }
-
   def sortColumns(c: CayleyTable[Int]): CayleyTable[Int] =
-    CayleyTable { c.table.transpose.sortWith(comparator).transpose }
+    CayleyTable { c.table.transpose.sorted.transpose }
 
   def sortRows(c: CayleyTable[Int]): CayleyTable[Int] =
-    CayleyTable { c.table.sortWith(comparator) }
+    CayleyTable { c.table.sorted }
 
-  def sortForComparison(c: CayleyTable[Int]): CayleyTable[Int] =
+  def sortTable(c: CayleyTable[Int]): CayleyTable[Int] =
     (sortRows _ andThen sortColumns)(c)
 
   // need to compare one Cayley table with all permutations of the other
   // all we're trying to establish is if they have the same structure, not the same contents
   def areIsomorphic[A,B](as: CayleyTable[A],  bs: CayleyTable[B]): Boolean = {
     val List(aNums, bNums) = List(as, bs).map(_.toNumericTable)
-    val sortedB = sortForComparison(bNums)
-    getAllPermutations(aNums).map(sortForComparison).contains(sortedB)
+    val sortedB = sortTable(bNums)
+    getAllPermutations(aNums).map(sortTable).contains(sortedB)
   }
 
   private def permuteCayleyTable(numericTable: CayleyTable[Int]): CayleyTable[Int] = {
@@ -90,8 +86,15 @@ object CayleyTable {
     columns.map(_.sorted).contains(identityColumn)
   }
 
-  def hasIdentityElement(numericTable: CayleyTable[Int]): Boolean =
-    hasIdentityColumn(numericTable) && hasIdentityRow(numericTable)
+  def hasIdentityElement(numericTable: CayleyTable[Int]): Boolean = {
+    val sorted = sortTable(numericTable).table
+    val firstRow = sorted.head
+    val firstColumn = sorted.map(_.head)
+
+    val elems = (0 until firstColumn.length).toList
+
+    firstRow == elems && firstColumn == elems
+  }
 
   case class Triple(x: Int, y: Int, z: Int)
 
@@ -102,6 +105,8 @@ object CayleyTable {
   // consider nxn table
   // we would need to retrieve all possible sets of 3 elements
   // and then check each set for associativity
+  // TODO: Consider implementing Light's associativity test
+  // https://en.wikipedia.org/wiki/Light%27s_associativity_test
   def isAssociative(numericTable: CayleyTable[Int]): Boolean = {
     val possibleMonoid = toFiniteMonoid(numericTable)
     val op = (x: Int) => (y: Int) => possibleMonoid.op(x,y)

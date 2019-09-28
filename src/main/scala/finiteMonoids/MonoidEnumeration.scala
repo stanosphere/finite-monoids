@@ -1,7 +1,9 @@
 package finiteMonoids
 
-import CayleyTable.{areIsomorphic, hasIdentityElement, sortRows, isAssociative}
+import CayleyTable._
 import helpers.ListHelpers.{combinations, distinctWith}
+
+// http://oeis.org/A058129
 
 // my thoughts for this are that we will generate all possible cayley tables
 // remove duplicates
@@ -18,6 +20,7 @@ object MonoidEnumeration extends App {
     combinations(n)((0 until n).toList)
 
   // this might work best as an iterator
+  // I've ordered the operations from least complicated to most complicated
   def getAllCayleyTables(n: Int): List[CayleyTable[Int]] = {
     // initialy the list will have a length of n ^ (n^2)
     val cayleys = combinations(n)(allRows(n))
@@ -28,8 +31,20 @@ object MonoidEnumeration extends App {
 
     val res = distinctWith(cayleys)(areIsomorphic).filter(isAssociative)
     println("final result", res.length)
-    res
+    res.map(sortTable)
   }
 
-  getAllCayleyTables(2).foreach(_.show())
+  getAllCayleyTables(3).foreach(_.show())
+
+//  val myTable = CayleyTable(List(List(1,0), List(0,1)))
+//  sortRows(sortRows(myTable)).show()
+//  sortColumns(myTable).show()
 }
+
+//0, 1, 2
+//1, 1, 1
+//2, 1, 1
+//
+//0, 1, 2
+//1, 2, 2
+//2, 2, 2

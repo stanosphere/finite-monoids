@@ -1,28 +1,7 @@
 package finiteMonoids
 
-import datastructures.Matrix
-import helpers.ListHelpers.{combinations, obtainCycle}
-
-case class IntTable(table: Matrix[Int]) {
-  // do all rows and columns contain the same unique set of elements?
-  def isCayleyTable: Boolean = {
-    true
-//    val rows = table.getAllRows
-//    val cols = table.getAllColumns
-//    val someRow = rows.head
-//    // is this row a row of unique elements?
-//    if (someRow != someRow.distinct) false
-//    else
-//      rows.map(_.sorted).forall(_ == someRow.sorted) &&
-//      cols.map(_.sorted).forall(_ == someRow.sorted)
-  }
-
-  def update(i: Int, j: Int)(k: Int): IntTable = IntTable {
-    table.update(i,j)(k)
-  }
-
-  def toCayleyTable: CayleyTable[Int] = CayleyTable { table.elems }
-}
+import CayleyTable.{areIsomorphic, hasIdentityElement, sortRows, isAssociative}
+import helpers.ListHelpers.{combinations, distinctWith}
 
 // my thoughts for this are that we will generate all possible cayley tables
 // remove duplicates
@@ -38,12 +17,18 @@ object MonoidEnumeration extends App {
   def allRows(n: Int): List[List[Int]] =
     combinations(n)((0 until n).toList)
 
+  // this might work best as an iterator
   def getAllCayleyTables(n: Int): List[CayleyTable[Int]] = {
-    combinations(n)(allRows(n))
-      .map(Matrix(_))
-      .map(x => { println(x); IntTable(x) })
-      .filter(_.isCayleyTable)
-      .map(_.toCayleyTable)
+    // initialy the list will have a length of n ^ (n^2)
+    val cayleys = combinations(n)(allRows(n))
+      .distinct
+      .map(CayleyTable(_))
+      .filter(hasIdentityElement) // get rid of tables that have no identity elements
+      .map(sortRows).distinct // get rid of duplicates after sorting
+
+    val res = distinctWith(cayleys)(areIsomorphic).filter(isAssociative)
+    println("final result", res.length)
+    res
   }
 
   getAllCayleyTables(2).foreach(_.show())

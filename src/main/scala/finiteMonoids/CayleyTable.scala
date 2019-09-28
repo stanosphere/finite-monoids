@@ -1,6 +1,6 @@
 package finiteMonoids
 
-import helpers.ListHelpers.{deepMap, zipWith, obtainCycle}
+import helpers.ListHelpers.{deepMap, zipWith, obtainCycle, combinations}
 import datastructures.Matrix
 
 // this is a simple way of representing the structure of a finite monoid
@@ -36,13 +36,13 @@ object CayleyTable {
     )
   }
 
-  private def sortColumns(c: CayleyTable[Int]): CayleyTable[Int] =
+  def sortColumns(c: CayleyTable[Int]): CayleyTable[Int] =
     CayleyTable { c.table.transpose.sortWith(comparator).transpose }
 
-  private def sortRows(c: CayleyTable[Int]): CayleyTable[Int] =
+  def sortRows(c: CayleyTable[Int]): CayleyTable[Int] =
     CayleyTable { c.table.sortWith(comparator) }
 
-  private def sortForComparison(c: CayleyTable[Int]): CayleyTable[Int] =
+  def sortForComparison(c: CayleyTable[Int]): CayleyTable[Int] =
     (sortRows _ andThen sortColumns)(c)
 
   // need to compare one Cayley table with all permutations of the other
@@ -77,4 +77,43 @@ object CayleyTable {
       def zero: Int = 0
     }
   }
+
+  def hasIdentityRow(numericTable: CayleyTable[Int]): Boolean = {
+    val rows = numericTable.table
+    val identityRow = (0 until rows.length).toList
+    rows.map(_.sorted).contains(identityRow)
+  }
+
+  def hasIdentityColumn(numericTable: CayleyTable[Int]): Boolean = {
+    val columns = numericTable.table.transpose
+    val identityColumn = (0 until columns.length).toList
+    columns.map(_.sorted).contains(identityColumn)
+  }
+
+  def hasIdentityElement(numericTable: CayleyTable[Int]): Boolean =
+    hasIdentityColumn(numericTable) && hasIdentityRow(numericTable)
+
+  case class Triple(x: Int, y: Int, z: Int)
+
+  object Triple {
+    def apply(xs: List[Int]): Triple = Triple(xs(0), xs(1), xs(2))
+  }
+
+  // consider nxn table
+  // we would need to retrieve all possible sets of 3 elements
+  // and then check each set for associativity
+  def isAssociative(numericTable: CayleyTable[Int]): Boolean = {
+    val possibleMonoid = toFiniteMonoid(numericTable)
+    val op = (x: Int) => (y: Int) => possibleMonoid.op(x,y)
+
+    val triples = combinations(3)(possibleMonoid.elements).map(Triple(_))
+
+    def tripleIsAssociative(t: Triple): Boolean = {
+      val Triple(x, y, z) = t
+      op(x)(op(y)(z)) == op(op(x)(y))(z)
+    }
+
+    triples.forall(tripleIsAssociative)
+  }
+
 }

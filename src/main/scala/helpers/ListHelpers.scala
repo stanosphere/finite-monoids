@@ -32,11 +32,11 @@ object ListHelpers {
       } yield x :: ys
     }
 
-  def getNCombinations[A](n: Int)(xs: List[A]): List[List[A]] =
-    xs match {
-      case _ :: _ if n == 1 => xs.map(List(_))
-      case hd :: tl =>
-        getNCombinations(n - 1)(tl).map(hd :: _) ::: getNCombinations(n)(tl)
-      case _ => Nil
-    }
+  def distinctWith[A](xs: List[A])(f: (A, A) => Boolean): List[A] = {
+    xs.foldLeft(Nil: List[A])((distinctXs, x) =>
+      if (distinctXs forall (!f(_,x))) x :: distinctXs
+      else distinctXs
+    )
+  }
+
 }

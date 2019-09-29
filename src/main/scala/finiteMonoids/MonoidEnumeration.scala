@@ -28,8 +28,9 @@ object MonoidEnumeration extends App {
       .map(CayleyTable(_))
       .filter(hasIdentityElement) // get rid of tables that have no identity elements
       .map(sortRows).distinct // get rid of duplicates after sorting
+      .filter(isAssociative) // get rid of non associative tables
 
-    val res = distinctWith(cayleys)(areIsomorphic).filter(isAssociative)
+    val res = distinctWith(cayleys)(areIsomorphic) // remove isomorphic tables
     println("final result", res.length)
     res.map(sortTable)
   }

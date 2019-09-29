@@ -2,8 +2,8 @@ package finiteMonoids
 
 import scala.math.Ordering.Implicits._
 
-import helpers.ListHelpers.{deepMap, zipWith, obtainCycle, combinations}
-import datastructures.Matrix
+import helpers.ListHelpers.{deepMap, combinations}
+import datastructures.{Matrix, Triple}
 
 // this is a simple way of representing the structure of a finite monoid
 // or, more generally, a finite Magma
@@ -60,29 +60,16 @@ object CayleyTable {
     fs map as.map
   }
 
-  def toFiniteMonoid(numericTable: CayleyTable[Int]): FiniteMonoid[Int] = {
+  def toMagma(numericTable: CayleyTable[Int]): Magma[Int] = {
     val elems = numericTable.table.head
     // just need to look up entry in cayley table
     // for convenience I think I'll just turn it into a matrix
     val matrix = Matrix(numericTable.table)
 
-    new FiniteMonoid[Int] {
+    new Magma[Int] {
       def elements: List[Int] = elems
       def op(x: Int, y: Int): Int = matrix.getElem(x, y)
-      def zero: Int = 0
     }
-  }
-
-  def hasIdentityRow(numericTable: CayleyTable[Int]): Boolean = {
-    val rows = numericTable.table
-    val identityRow = (0 until rows.length).toList
-    rows.map(_.sorted).contains(identityRow)
-  }
-
-  def hasIdentityColumn(numericTable: CayleyTable[Int]): Boolean = {
-    val columns = numericTable.table.transpose
-    val identityColumn = (0 until columns.length).toList
-    columns.map(_.sorted).contains(identityColumn)
   }
 
   def hasIdentityElement(numericTable: CayleyTable[Int]): Boolean = {
@@ -95,22 +82,16 @@ object CayleyTable {
     firstRow == elems && firstColumn == elems
   }
 
-  case class Triple(x: Int, y: Int, z: Int)
-
-  object Triple {
-    def apply(xs: List[Int]): Triple = Triple(xs(0), xs(1), xs(2))
-  }
-
   // consider nxn table
   // we would need to retrieve all possible sets of 3 elements
   // and then check each set for associativity
   // TODO: Consider implementing Light's associativity test
   // https://en.wikipedia.org/wiki/Light%27s_associativity_test
   def isAssociative(numericTable: CayleyTable[Int]): Boolean = {
-    val possibleMonoid = toFiniteMonoid(numericTable)
-    val op = (x: Int) => (y: Int) => possibleMonoid.op(x,y)
+    val magma = toMagma(numericTable)
+    val op = (x: Int) => (y: Int) => magma.op(x,y)
 
-    val triples = combinations(3)(possibleMonoid.elements).map(Triple(_))
+    val triples = combinations(3)(magma.elements).map(Triple(_))
 
     def tripleIsAssociative(t: Triple): Boolean = {
       val Triple(x, y, z) = t

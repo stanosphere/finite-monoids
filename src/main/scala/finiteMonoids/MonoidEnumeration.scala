@@ -2,8 +2,11 @@ package finiteMonoids
 
 import CayleyTable._
 import helpers.ListHelpers.{combinations, distinctWith}
+import helpers.IteratorHelpers
+
 
 // http://oeis.org/A058129
+// 0, 1, 2, 7, 35, 228, 2237, 31559, 1668997
 
 // my thoughts for this are that we will generate all possible cayley tables
 // remove duplicates
@@ -23,14 +26,14 @@ object MonoidEnumeration extends App {
   // I've ordered the operations from least complicated to most complicated
   def getAllCayleyTables(n: Int): List[CayleyTable[Int]] = {
     // initialy the list will have a length of n ^ (n^2)
-    val cayleys = combinations(n)(allRows(n))
+    val cayleys = IteratorHelpers.combinations(n)(allRows(n))
       .distinct
       .map(CayleyTable(_))
       .filter(hasIdentityElement) // get rid of tables that have no identity elements
       .map(sortRows).distinct // get rid of duplicates after sorting
       .filter(isAssociative) // get rid of non associative tables
 
-    val res = distinctWith(cayleys)(areIsomorphic) // remove isomorphic tables
+    val res = distinctWith(cayleys.toList)(areIsomorphic) // remove isomorphic tables
     println("final result", res.length)
     res.map(sortTable)
   }

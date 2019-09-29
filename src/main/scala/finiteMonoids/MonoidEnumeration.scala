@@ -38,7 +38,7 @@ object MonoidEnumeration extends App {
     res.map(sortTable)
   }
 
-  getAllCayleyTables(3).foreach(_.prettyPrint())
+//  getAllCayleyTables(3).foreach(_.prettyPrint())
 
 //  val myTable = CayleyTable(List(List(1,0), List(0,1)))
 //  sortRows(sortRows(myTable)).show()

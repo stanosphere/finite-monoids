@@ -18,6 +18,24 @@ case class CayleyTable[A](table: List[List[A]]) {
     })
   }
 
+  def prettyPrint(): Unit = {
+    def toSymbolic(x: Int): String = (x + 97).toChar.toString
+
+    val symbolicTable = this.toNumericTable map toSymbolic
+    val topRow = "   " + symbolicTable
+      .table.head
+      .map(x => x)
+      .reduce((x,y) => s"${x}  ${y}")
+    val seperatorRow = List.fill(topRow.length)("_").reduce((x,y) => s"${x}${y}")
+
+    println("Symbolic Cayley Table")
+    println (topRow)
+    println (seperatorRow)
+    symbolicTable.table.foreach(row => {
+      println(row.head + " |" + row.reduce((x,y) => s"${x}  ${y}"))
+    })
+  }
+
   def map[B](f: A => B): CayleyTable[B] = CayleyTable {
     deepMap(f)(table)
   }

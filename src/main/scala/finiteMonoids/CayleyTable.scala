@@ -3,6 +3,7 @@ package finiteMonoids
 import scala.math.Ordering.Implicits._
 
 import helpers.ListHelpers.{deepMap, combinations}
+import helpers.Tabulator.tabulateCayley
 import datastructures.{Matrix, Triple}
 
 // this is a simple way of representing the structure of a finite monoid
@@ -19,19 +20,8 @@ case class CayleyTable[A](table: List[List[A]]) {
 
   def prettyPrint(): Unit = {
     def toSymbolic(x: Int): String = (x + 97).toChar.toString
-
     val symbolicTable = this.toNumericTable map toSymbolic
-    val topRow = "|   | " + symbolicTable.table.head.reduce((x, y) => s"$x  $y") + " |"
-    val separatorRow = "+" + "-" * 3 + "+" + "-" * (topRow.length - 6) + "+"
-
-    println("Symbolic Cayley Table")
-    println(separatorRow)
-    println(topRow)
-    println(separatorRow)
-    symbolicTable.table.foreach(row =>
-      println("| " + row.head + " | " + row.reduce((x, y) => s"$x  $y") + " |")
-    )
-    println(separatorRow)
+    println(tabulateCayley(symbolicTable))
   }
 
   def map[B](f: A => B): CayleyTable[B] = CayleyTable {

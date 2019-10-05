@@ -58,9 +58,9 @@ case class Matrix[A: Mult](elems: List[List[A]]) {
 
   def show(): Unit = {
     println("Matrix:")
-    elems.foreach(row => {
-      println(row.map(_.toString).reduce((x, y) => s"${x}, ${y}"))
-    })
+    elems.foreach(row =>
+      println(row.map(_.toString).reduce((x, y) => s"$x, $y"))
+    )
   }
 }
 

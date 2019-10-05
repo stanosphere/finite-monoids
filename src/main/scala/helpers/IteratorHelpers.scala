@@ -12,7 +12,7 @@ object IteratorHelpers {
   def distinctWith[A](xs: Iterator[A])(f: (A, A) => Boolean): Iterator[A] = {
     xs.foldLeft(Iterator(): Iterator[A])((distinctXs, x) => {
       val (forTraversal, forAnswer) = distinctXs.duplicate
-      if (forTraversal forall (!f(_,x))) forAnswer ++ Iterator(x)
+      if (forTraversal forall (!f(_, x))) forAnswer ++ Iterator(x)
       else forAnswer
     })
   }

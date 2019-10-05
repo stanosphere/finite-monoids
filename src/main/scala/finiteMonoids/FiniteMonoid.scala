@@ -4,17 +4,17 @@ package finiteMonoids
 
 /**
  * A [[Monoid]] combined with its finite list of elements
- * */
+ **/
 trait FiniteMonoid[A] extends Monoid[A] {
   def elements: List[A]
 
   def computeCayleyTable: CayleyTable[A] = CayleyTable {
-    val allCombinations = for { x <- elements; y <- elements } yield op(x,y)
+    val allCombinations = for {x <- elements; y <- elements} yield op(x, y)
     allCombinations.grouped(elements.length).toList
   }
 }
 
 object FiniteMonoid {
-  def areIsomorphic[A,B](x: FiniteMonoid[A], y: FiniteMonoid[B]): Boolean =
+  def areIsomorphic[A, B](x: FiniteMonoid[A], y: FiniteMonoid[B]): Boolean =
     CayleyTable.areIsomorphic(x.computeCayleyTable, y.computeCayleyTable)
 }

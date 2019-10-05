@@ -1,4 +1,5 @@
 package datastructures
+
 // https://scalac.io/typeclasses-in-scala/
 
 trait Show[A] {

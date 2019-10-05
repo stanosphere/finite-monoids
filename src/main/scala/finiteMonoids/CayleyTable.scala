@@ -1,36 +1,35 @@
 package finiteMonoids
 
 import scala.math.Ordering.Implicits._
-
-import helpers.ListHelpers.{deepMap, combinations}
+import helpers.ListHelpers.{combinations, deepMap}
 import helpers.Tabulator.tabulateCayley
 import datastructures.{Matrix, Triple}
+import file.CSVLine
 
 // this is a simple way of representing the structure of a finite monoid
 // or, more generally, a finite Magma
 // https://en.wikipedia.org/wiki/Cayley_table
 case class CayleyTable[A](table: List[List[A]]) {
-
-  def show(): Unit = {
-    println("Cayley Table:")
-    table.foreach(row => {
-      println(row.map(_.toString).reduce((x, y) => s"$x, $y"))
-    })
-  }
-
-  def prettyPrint(): Unit = {
-    def toSymbolic(x: Int): String = (x + 97).toChar.toString
-    val symbolicTable = this.toNumericTable map toSymbolic
-    println(tabulateCayley(symbolicTable))
-  }
+  def prettyPrint(): Unit =
+    println(tabulateCayley(this.toSymbolic))
 
   def map[B](f: A => B): CayleyTable[B] = CayleyTable {
     deepMap(f)(table)
   }
 
   def toNumericTable: CayleyTable[Int] = CayleyTable {
-    val rep = table.flatten.distinct.zipWithIndex.toMap[A, Int]
-    deepMap(rep)(table)
+    val representation = table.flatten.distinct.zipWithIndex.toMap[A, Int]
+    deepMap(representation)(table)
+  }
+
+  def toSymbolic: CayleyTable[String] = {
+    def toSymbolicElem(x: Int): String = (x + 97).toChar.toString
+
+    this.toNumericTable map toSymbolicElem
+  }
+
+  def toCSVLine: CSVLine = CSVLine {
+    this.toSymbolic.table.flatten.mkString(",")
   }
 
   def elems: List[A] = table.flatten.distinct
@@ -56,10 +55,10 @@ object CayleyTable {
     val aNums = as.toNumericTable
     val bNums = bs.toNumericTable
 
-    val sortedPermutations = getAllPermutations(aNums).map(sortTable)
+    val sortedPermutations = getAllPermutations(aNums) map sortTable
     val sortedB = sortTable(bNums)
 
-    sortedPermutations.contains(sortedB)
+    sortedPermutations contains sortedB
   }
 
   // I believe this could be made polymorphic with a judicious use of `zipWithIndex`

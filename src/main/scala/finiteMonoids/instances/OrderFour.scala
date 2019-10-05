@@ -80,10 +80,10 @@ object OrderFour {
   vierergruppe
     .computeCayleyTable
     .toNumericTable
-    .show()
+    .prettyPrint()
 
   vierergruppeMatrixRep
     .computeCayleyTable
     .toNumericTable
-    .show()
+    .prettyPrint()
 }

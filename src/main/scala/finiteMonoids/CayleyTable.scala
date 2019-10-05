@@ -9,12 +9,11 @@ import datastructures.{Matrix, Triple}
 // or, more generally, a finite Magma
 // https://en.wikipedia.org/wiki/Cayley_table
 case class CayleyTable[A](table: List[List[A]]) {
-  import CayleyTable._
 
   def show(): Unit = {
     println("Cayley Table:")
     table.foreach(row => {
-      println(row.map(_.toString).reduce((x,y) => s"${x}, ${y}"))
+      println(row.map(_.toString).reduce((x, y) => s"$x, $y"))
     })
   }
 
@@ -22,18 +21,17 @@ case class CayleyTable[A](table: List[List[A]]) {
     def toSymbolic(x: Int): String = (x + 97).toChar.toString
 
     val symbolicTable = this.toNumericTable map toSymbolic
-    val topRow = "   " + symbolicTable
-      .table.head
-      .map(x => x)
-      .reduce((x,y) => s"${x}  ${y}")
-    val seperatorRow = List.fill(topRow.length)("_").reduce((x,y) => s"${x}${y}")
+    val topRow = "|   | " + symbolicTable.table.head.reduce((x, y) => s"$x  $y") + " |"
+    val separatorRow = "+" + "-" * 3 + "+" + "-" * (topRow.length - 6) + "+"
 
     println("Symbolic Cayley Table")
-    println (topRow)
-    println (seperatorRow)
-    symbolicTable.table.foreach(row => {
-      println(row.head + " |" + row.reduce((x,y) => s"${x}  ${y}"))
-    })
+    println(separatorRow)
+    println(topRow)
+    println(separatorRow)
+    symbolicTable.table.foreach(row =>
+      println("| " + row.head + " | " + row.reduce((x, y) => s"$x  $y") + " |")
+    )
+    println(separatorRow)
   }
 
   def map[B](f: A => B): CayleyTable[B] = CayleyTable {
@@ -50,17 +48,21 @@ case class CayleyTable[A](table: List[List[A]]) {
 
 object CayleyTable {
   def sortColumns(c: CayleyTable[Int]): CayleyTable[Int] =
-    CayleyTable { c.table.transpose.sorted.transpose }
+    CayleyTable {
+      c.table.transpose.sorted.transpose
+    }
 
   def sortRows(c: CayleyTable[Int]): CayleyTable[Int] =
-    CayleyTable { c.table.sorted }
+    CayleyTable {
+      c.table.sorted
+    }
 
   def sortTable(c: CayleyTable[Int]): CayleyTable[Int] =
-    (sortRows _ andThen sortColumns)(c)
+    (sortRows _ andThen sortColumns) (c)
 
   // need to compare one Cayley table with all permutations of the other
   // all we're trying to establish is if they have the same structure, not the same contents
-  def areIsomorphic[A,B](as: CayleyTable[A], bs: CayleyTable[B]): Boolean = {
+  def areIsomorphic[A, B](as: CayleyTable[A], bs: CayleyTable[B]): Boolean = {
     val aNums = as.toNumericTable
     val bNums = bs.toNumericTable
 
@@ -86,6 +88,7 @@ object CayleyTable {
 
     new Magma[Int] {
       def elements: List[Int] = elems
+
       def op(x: Int, y: Int): Int = matrix.getElem(x, y)
     }
   }
@@ -107,7 +110,7 @@ object CayleyTable {
   // https://en.wikipedia.org/wiki/Light%27s_associativity_test
   def isAssociative(numericTable: CayleyTable[Int]): Boolean = {
     val magma = toMagma(numericTable)
-    val op = (x: Int) => (y: Int) => magma.op(x,y)
+    val op = (x: Int) => (y: Int) => magma.op(x, y)
 
     val triples = combinations(3)(magma.elements).map(Triple(_))
 

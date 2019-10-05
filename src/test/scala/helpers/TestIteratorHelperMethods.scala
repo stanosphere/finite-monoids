@@ -3,9 +3,8 @@ package helpers
 import org.scalatest.FlatSpec
 import IteratorHelpers._
 
-
 class TestIteratorHelperMethods extends FlatSpec {
-  "distinctWith" should "just behave like `distinct` if I dive it the equality function" in {
+  "distinctWith" should "just behave like `distinct` if I give it the equality function" in {
     val xs = Iterator(1,2,3)
     val equals = (x: Any, y: Any) => x == y
     val res = distinctWith(xs)(equals).toList

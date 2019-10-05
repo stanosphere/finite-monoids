@@ -1,8 +1,9 @@
 package finiteMonoids
 
 import CayleyTable._
-import helpers.ListHelpers.{combinations, distinctWith}
+import helpers.ListHelpers.combinations
 import helpers.IteratorHelpers
+import helpers.IteratorHelpers.distinctWith
 
 
 // http://oeis.org/A058129
@@ -33,12 +34,12 @@ object MonoidEnumeration extends App {
       .map(sortRows).distinct // get rid of duplicates after sorting
       .filter(isAssociative) // get rid of non associative tables
 
-    val res = distinctWith(cayleys.toList)(areIsomorphic) // remove isomorphic tables
+    val res = distinctWith(cayleys)(areIsomorphic).toList // remove isomorphic tables
     println("final result", res.length)
     res.map(sortTable)
   }
 
-//  getAllCayleyTables(3).foreach(_.prettyPrint())
+  getAllCayleyTables(3).foreach(_.prettyPrint())
 
 //  val myTable = CayleyTable(List(List(1,0), List(0,1)))
 //  sortRows(sortRows(myTable)).show()

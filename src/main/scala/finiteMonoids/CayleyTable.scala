@@ -111,4 +111,8 @@ object CayleyTable {
     triples.forall(tripleIsAssociative)
   }
 
+  def hasInverse(numericTable: CayleyTable[Int]): Boolean = {
+    ???
+  }
+
 }

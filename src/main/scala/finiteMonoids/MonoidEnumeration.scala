@@ -38,11 +38,11 @@ object MonoidEnumeration extends App {
     val res = distinctWith(cayleys)(areIsomorphic).toList.map(sortTable) // remove isomorphic tables
     println("final result", res.length)
     val asCsv = CSV(Nil, res.map(_.toCSVLine))
-    saveCsv("monoids/order3.csv")(asCsv)
+    saveCsv(s"monoids/order$n.csv")(asCsv)
     res
   }
 
-  getAllCayleyTables(3).foreach(_.prettyPrint())
+  getAllCayleyTables(4).foreach(_.prettyPrint())
 
   //  val myTable = CayleyTable(List(List(1,0), List(0,1)))
   //  sortRows(sortRows(myTable)).show()

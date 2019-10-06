@@ -17,10 +17,10 @@ object ReadFile extends App {
     CSV(headers, data)
   }
 
-  def lineToCayleyTable(line: String): CayleyTable[String] = {
+  def lineToCayleyTable(line: String): CayleyTable[String] = CayleyTable {
     val elems = line.split(",").map(_.trim)
     val n = Math.sqrt(elems.length).toInt
-    CayleyTable { elems.grouped(n).toList.map(_.toList) }
+    elems.grouped(n).toList.map(_.toList)
   }
 
   def readCSVToListOfCayleytables(path: String): List[CayleyTable[String]] = {

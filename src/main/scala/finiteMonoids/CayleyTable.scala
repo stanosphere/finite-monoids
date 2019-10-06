@@ -112,7 +112,12 @@ object CayleyTable {
   }
 
   def hasInverse(numericTable: CayleyTable[Int]): Boolean = {
-    ???
+    val uniqueElems = numericTable.table.flatten.distinct
+    val magma = toMagma(numericTable)
+    val op = (x: Int) => (y: Int) => magma.op(x, y)
+    val areInverses = (x: Int, y: Int) => op(x)(y) == 0
+
+    uniqueElems.forall(x => uniqueElems.exists(areInverses(x, _)))
   }
 
 }

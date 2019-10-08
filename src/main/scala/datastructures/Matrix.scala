@@ -6,9 +6,7 @@ import helpers.ListHelpers.{deepMap, deepZipWith, zipWith}
 
 case class Matrix[A: Mult](elems: List[List[A]]) {
   def *(rightMatrix: Matrix[A]): Matrix[A] = {
-    val leftMatrix = Matrix {
-      elems
-    }
+    val leftMatrix = this
     val (m, n) = size
     val indices = for {i <- 0 until m; j <- 0 until n} yield (i, j)
     indices.foldLeft(leftMatrix)((productMatrix, ij) => {

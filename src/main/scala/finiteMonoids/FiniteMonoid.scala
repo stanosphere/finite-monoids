@@ -17,6 +17,19 @@ trait FiniteMonoid[A] extends Monoid[A] {
     val allCombinations = for {x <- elements; y <- elements} yield op(x, y)
     allCombinations.grouped(elements.length).toList
   }
+
+  def isAssociative: Boolean =
+    CayleyTable.isAssociative(computeCayleyTable.toNumericTable)
+
+  def hasIdentityElement: Boolean =
+    CayleyTable.hasIdentityElement(computeCayleyTable.toNumericTable)
+
+  def isClosed: Boolean = {
+    val computedElements = computeCayleyTable.table.flatten.distinct.toSet
+    elements.toSet == computedElements
+  }
+
+  def isMonoid: Boolean = isAssociative && hasIdentityElement && isClosed
 }
 
 object FiniteMonoid {

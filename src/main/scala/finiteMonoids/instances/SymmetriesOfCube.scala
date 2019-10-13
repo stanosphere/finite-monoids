@@ -1,7 +1,7 @@
 package finiteMonoids.instances
 
 import datastructures.Matrix
-import datastructures.Matrix.getPermutationMatrices
+import datastructures.Matrix.{getAllSignPermutations, getPermutationMatrices}
 import finiteMonoids.FiniteMonoid
 
 // https://en.wikipedia.org/wiki/Octahedral_symmetry
@@ -14,5 +14,15 @@ import finiteMonoids.FiniteMonoid
 // The other 24 matrices correspond to a reflection or inversion.
 
 object SymmetriesOfCube {
-  val permutationGroup: List[Matrix[Int]] = getPermutationMatrices(3)
+
+  val CubeMonoid: FiniteMonoid[Matrix[Int]] = new FiniteMonoid[Matrix[Int]] {
+    override def elements: List[Matrix[Int]] =
+      getPermutationMatrices(3) flatMap getAllSignPermutations
+
+    println(elements.length)
+
+    override def op(a1: Matrix[Int], a2: Matrix[Int]): Matrix[Int] = a1 * a2
+
+    override def zero: Matrix[Int] = Matrix.identityInt(3)
+  }
 }

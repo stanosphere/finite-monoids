@@ -37,6 +37,9 @@ object Par {
       def call: A = a(es).get
     })
 
+  def unsafeRun[A](p: Par[A]): A =
+    p(Executors.newWorkStealingPool).get
+
   def map[A, B](pa: Par[A])(f: A => B): Par[B] =
     map2(pa, unit(()))((a, _) => f(a))
 
@@ -142,6 +145,8 @@ object Par {
     def zip[B](b: Par[B]): Par[(A, B)] = p.map2(b)((_, _))
 
     def flatMap[B](f: A => Par[B]): Par[B] = Par.flatMap(p)(f)
+
+    def unsafeRun: A = Par.unsafeRun(p)
   }
 
   // remember Par is just an alias for a function that takes an ExecutorService

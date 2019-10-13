@@ -1,9 +1,8 @@
 package finiteMonoids
 
-import java.util.concurrent.{ExecutorService, Executors}
-
 import helpers.MapHelpers.invert
 import parallelism.Par
+import parallelism.Par.toParOps
 import parallelism.Par.Par
 
 // TODO: Consider if a `Set` would be a better way to represent the elements of the monoid
@@ -27,21 +26,22 @@ object FiniteMonoid {
   def reduceLeft[A](m: FiniteMonoid[A])(as: List[A]): A =
     as.foldLeft(m.zero)(m.op)
 
+  // the fact that we can do this follows from the associativity and identity laws
   def foldInParallel[A](m: Monoid[A])(as: IndexedSeq[A]): A = {
-    val answerAsPar: Par[A] = Par.foldPar(m.zero)(m.op)(as)
-
-    answerAsPar(Executors.newWorkStealingPool).get
+    // here a Par just represents a unit of parallelism
+    val res: Par[A] = Par.foldPar(m.zero)(m.op)(as)
+    res.unsafeRun
   }
 
   def reduceLeftInCayleySpace[A](m: FiniteMonoid[A])(as: List[A]): A = {
-    val cayleyTable = m computeCayleyTable
-    val cayleyMonoid = cayleyTable toFiniteMonoid
-    val aToInt: Map[A, Int] = cayleyTable getMapToNumericRep
+    val cayleyTable = m.computeCayleyTable
+    val cayleyMonoid = cayleyTable.toFiniteMonoid
+    val aToInt: Map[A, Int] = cayleyTable.getMapToNumericRep
     val intToA: Map[Int, A] = invert(aToInt)
 
     val ints = as map aToInt
 
-    val intRes = ints.foldLeft(cayleyMonoid zero)(cayleyMonoid op)
+    val intRes = ints.foldLeft(cayleyMonoid.zero)(cayleyMonoid.op)
 
     intToA(intRes)
   }

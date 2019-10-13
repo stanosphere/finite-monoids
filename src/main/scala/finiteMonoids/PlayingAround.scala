@@ -22,6 +22,10 @@ object PlayingAround extends App {
     FiniteMonoid.reduceLeft(cubeMonoid)(tenElements)
   }
 
+  Timed("10 Parallel way") {
+    FiniteMonoid.foldInParallel(cubeMonoid)(tenElements.toIndexedSeq)
+  }
+
   Timed("10 Cayley way") {
     FiniteMonoid.reduceLeftInCayleySpace(cubeMonoid)(tenElements)
   }

@@ -35,9 +35,14 @@ case class CayleyTable[A](table: List[List[A]]) {
     }
   }
 
-  // TODO: Make this nicer for larger tables
   def toSymbolic: CayleyTable[String] = {
-    def toSymbolicElem(x: Int): String = (x + 97).toChar.toString
+    val greekLetterRange = 945 to 969
+    val latinLetterRange = 97 to (97 + 26)
+
+    def toSymbolicElem(x: Int): String = {
+      if (x <= 25) latinLetterRange(x)
+      else greekLetterRange(x - 26)
+      }.toChar.toString
 
     this.toNumericTable map toSymbolicElem
   }

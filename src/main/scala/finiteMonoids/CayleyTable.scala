@@ -35,6 +35,7 @@ case class CayleyTable[A](table: List[List[A]]) {
     }
   }
 
+  // TODO: Make this nicer for larger tables
   def toSymbolic: CayleyTable[String] = {
     def toSymbolicElem(x: Int): String = (x + 97).toChar.toString
 

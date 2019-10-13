@@ -2,7 +2,7 @@ package datastructures
 
 import datastructures.Matrix.dotProduct
 import datastructures.Mult.MultOps
-import helpers.ListHelpers.{deepMap, deepZipWith, zipWith}
+import helpers.ListHelpers.{combinations, deepMap, deepZipWith, zipWith}
 
 case class Matrix[A: Mult](elems: List[List[A]]) {
   def *(rightMatrix: Matrix[A]): Matrix[A] = {
@@ -62,7 +62,7 @@ case class Matrix[A: Mult](elems: List[List[A]]) {
   }
 }
 
-object Matrix extends App {
+object Matrix {
   def dotProduct[A: Mult](xs: List[A], ys: List[A]): A =
     zipWith(xs, ys)(_ * _).reduce(_ + _)
 
@@ -80,4 +80,26 @@ object Matrix extends App {
     (0 until n).foldLeft(empty(n))(
       (m, i) => m.update(i, i)(1)
     )
+
+  // list will be n! long
+  def getPermutationMatrices(n: Int): List[Matrix[Int]] = {
+    val startingRow = 1 :: List.fill(n - 1)(0)
+    val rows = startingRow.permutations.toList
+    rows.permutations.toList.map(Matrix(_))
+  }
+
+  // produces a list of length 2 ^ n where n is the size of the matrix
+  def getAllSignPermutations(permutationMatrix: Matrix[Int]): List[Matrix[Int]] = {
+    val n = permutationMatrix.size._1
+
+    val rows = permutationMatrix.getAllRows
+
+    val combs = combinations(n)(List(1, -1))
+    println(combs)
+
+//    combs.map(comb => comb.map)
+    List(Matrix.fill(1)(1))
+  }
+
+  getAllSignPermutations(Matrix.fill(1)(1))
 }

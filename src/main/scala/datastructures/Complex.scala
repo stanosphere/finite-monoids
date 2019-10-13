@@ -15,6 +15,3 @@ case class Complex(re: Double, im: Double) {
   def mag(): Double = Math.hypot(re, im)
 }
 
-object Complex extends App {
-  println(Complex(1, 2))
-}

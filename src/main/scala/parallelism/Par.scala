@@ -169,7 +169,7 @@ object Par {
 
   def foldPar[A](z: A)(f: (A, A) => A)(as: IndexedSeq[A]): Par[A] = {
     def foldAndFork(ys: IndexedSeq[A]): Par[A] =
-      (foldPar(z)(f) andThen Par.fork) (ys)
+      Par.fork(foldPar(z)(f)(ys))
 
     as match {
       case IndexedSeq() => Par.unit(z)

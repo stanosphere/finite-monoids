@@ -39,4 +39,29 @@ object ListHelpers {
     )
   }
 
+  /**
+   * List(List(1,2), List(3)) ->
+   * List(List(1,3), List(2,3))
+   */
+  def allChoices[A](listsOfChoices: List[List[A]]): List[List[A]] = {
+    val length = listsOfChoices.length
+    //    List(List(1), List(2)))
+    if (length == 0) List(Nil)
+    else {
+      for {
+        choice <- listsOfChoices.head
+        ys <- allChoices(listsOfChoices.tail)
+      } yield choice :: ys
+    }
+  }
+
+  def combinations2[A](n: Int)(xs: List[A]): List[List[A]] =
+    n match {
+      case 0 => List(Nil)
+      case _ => for {
+        x <- xs
+        ys <- combinations(n - 1)(xs)
+      } yield x :: ys
+    }
+
 }

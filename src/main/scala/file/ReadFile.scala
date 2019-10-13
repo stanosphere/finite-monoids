@@ -3,7 +3,7 @@ package file
 import better.files.File
 import finiteMonoids.CayleyTable
 
-object ReadFile extends App {
+object ReadFile {
   val dataDir = "./data/"
 
   def read(path: String): String =

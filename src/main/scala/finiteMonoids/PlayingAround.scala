@@ -6,13 +6,13 @@ import helpers.Timed
 
 object PlayingAround extends App {
   val cubeMonoid = CubeMonoid
-  val random = Random
 
   cubeMonoid.elements.take(10).foreach(_.show())
   cubeMonoid.computeCayleyTable.prettyPrint()
 
   def getRandomCombinationOfLengthN[A](elems: List[A])(n: Int): List[A] = {
     def nextA = elems(Random.nextInt(elems.length))
+
     List.fill(n)(nextA)
   }
 
@@ -36,7 +36,4 @@ object PlayingAround extends App {
   Timed("1,000,000 Cayley way") {
     FiniteMonoid.reduceLeftInCayleySpace(cubeMonoid)(oneMillionElements)
   }
-
-
-
 }

@@ -54,6 +54,16 @@ case class Matrix[A: Mult](elems: List[List[A]]) {
 
   def isSquare: Boolean = size._1 == size._2
 
+  override def toString: String = {
+    val rows = elems
+      .map(_.map(_.toString).reduce((x, y) => s"$x, $y"))
+      .reduce(_ + "\n  " + _)
+    s"""Matrix {
+       |  $rows
+       |}
+       |""".stripMargin
+  }
+
   def show(): Unit = {
     println("Matrix:")
     elems.foreach(row =>

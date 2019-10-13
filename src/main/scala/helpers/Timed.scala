@@ -6,7 +6,9 @@ object Timed {
     val result = block
     val t1 = System.currentTimeMillis()
     val secs = (t1 - t0).toDouble / 1000
-    println(s"Timed $name: $secs sec")
+    println(s"Timed $name: $secs sec;")
+    println(s"Result: $result")
+    println("\n")
     result
   }
 }

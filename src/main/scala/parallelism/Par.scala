@@ -166,10 +166,12 @@ object Par {
     def foldAndFork(ys: IndexedSeq[A]): Par[A] =
       (foldPar(z)(f) andThen Par.fork) (ys)
 
-    if (as.length <= 1) Par.unit(as.headOption getOrElse z)
-    else {
-      val (l, r) = as.splitAt(as.length / 2)
-      Par.map2(foldAndFork(l), foldAndFork(r))(f)
+    as match {
+      case IndexedSeq() => Par.unit(z)
+      case IndexedSeq(a) => Par.unit(a)
+      case xs =>
+        val (l, r) = xs.splitAt(xs.length / 2)
+        Par.map2(foldAndFork(l), foldAndFork(r))(f)
     }
   }
 

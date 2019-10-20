@@ -36,7 +36,7 @@ case class CayleyTable[A](table: List[List[A]]) {
   }
 
   def toSymbolic: CayleyTable[String] = {
-    val greekLetterRange = 945 to 969
+    val greekLetterRange = 945 to (945 + 24)
     val latinLetterRange = 97 to (97 + 26)
 
     def toSymbolicElem(x: Int): String = {
@@ -51,7 +51,7 @@ case class CayleyTable[A](table: List[List[A]]) {
     this.toSymbolic.table.flatten.mkString(",")
   }
 
-  def elems: List[A] = table.flatten.distinct
+  def uniqueElems: List[A] = table.flatten.distinct
 }
 
 object CayleyTable {
@@ -82,10 +82,14 @@ object CayleyTable {
 
   // I believe this could be made polymorphic with a judicious use of `zipWithIndex`
   def getAllPermutations(as: CayleyTable[Int]): List[CayleyTable[Int]] = {
-    val permutations = as.elems.permutations.toList
-    val fs: List[Int => Int] = permutations map (perm => x => perm(x))
+    val permutations = as.uniqueElems.permutations.toList
+    val select = (list: List[Int]) => (index: Int) => list(index)
 
-    fs map as.map
+    // An exhaustive list of functions that will permute a Cayley table
+    val permutators: List[Int => Int] = permutations map select
+
+    // so for each permutator we're gonna get a new Cayley table
+    permutators map as.map
   }
 
   def toMagma(numericTable: CayleyTable[Int]): Magma[Int] = {
@@ -131,7 +135,7 @@ object CayleyTable {
   }
 
   def hasInverse(numericTable: CayleyTable[Int]): Boolean = {
-    val uniqueElems = numericTable.table.flatten.distinct
+    val uniqueElems = numericTable.uniqueElems
     val magma = toMagma(numericTable)
     val areInverses =
       (x: Int, y: Int) => magma.op(x, y) == 0

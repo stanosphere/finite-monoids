@@ -34,16 +34,16 @@ trait FiniteMonoid[A] extends Monoid[A] {
   def *[B](b: FiniteMonoid[B]): FiniteMonoid[(A, B)] = {
     val aOp: (A, A) => A = this.op
     val aZero = this.zero
-    val aElems = this.elements
+    val aElements = this.elements
 
     new FiniteMonoid[(A, B)] {
-      override def elements: List[(A, B)] =
-        for {a <- aElems; b <- b.elements} yield (a, b)
+      def elements: List[(A, B)] =
+        for {a <- aElements; b <- b.elements} yield (a, b)
 
-      override def op(x: (A, B), y: (A, B)): (A, B) =
+      def op(x: (A, B), y: (A, B)): (A, B) =
         (aOp(x._1, y._1), b.op(x._2, y._2))
 
-      override def zero: (A, B) = (aZero, b.zero)
+      def zero: (A, B) = (aZero, b.zero)
     }
   }
 }
